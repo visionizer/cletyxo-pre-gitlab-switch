@@ -3,8 +3,9 @@ OSNAME = Cletyxo
 
 GNUEFI = ../gnu-efi
 OVMFDIR = ../OVMFbin
-LDS = 
-CC = x86_64-w64-mingw32-gcc
+LDS = kernel.ld
+CC = gcc
+LD = ld
 
 CFLAGS = -ffreestanding -fshort-wchar
 LDFLAGS = -T $(LDS) -shared -Bsymbolic -nostdlib
@@ -20,6 +21,23 @@ SRC = $(call rwildcard,$(SRCDIR),*.c)
 OBJS = $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(SRC))
 DIRS = $(wildcard $(SRCDIR)/*)
 
+pfb: kernel buildimg
+
+boot: kernel buildimg run
+
+
+kernel: $(OBJS) link
+$(OBJDIR)/%.o: $(SRCDIR)/%.c
+	@ echo !==== COMPILING $^
+	@ mkdir -p $(@D)
+	$(CC) $(CFLAGS) -c $^ -o $@
+
+link:
+	@ echo !==== LINKING
+	$(LD) $(LDFLAGS) -o $(BUILDDIR)/kernel.elf $(OBJS)
+
+
+
 setup:
 	@mkdir $(BUILDDIR)
 	@mkdir $(SRCDIR)
@@ -32,6 +50,7 @@ buildimg:
 	mmd -i $(BUILDDIR)/$(OSNAME).img ::/EFI/BOOT
 	mcopy -i $(BUILDDIR)/$(OSNAME).img $(BOOTEFI) ::/EFI/BOOT
 	mcopy -i $(BUILDDIR)/$(OSNAME).img startup.nsh ::
+	mcopy -i $(BUILDDIR)/$(OSNAME).img $(BUILDDIR)/kernel.elf ::
 
 run:
 	qemu-system-x86_64 -drive file=$(BUILDDIR)/$(OSNAME).img -m 256M -cpu qemu64 -drive if=pflash,format=raw,unit=0,file="$(OVMFDIR)/OVMF_CODE-pure-efi.fd",readonly=on -drive if=pflash,format=raw,unit=1,file="$(OVMFDIR)/OVMF_VARS-pure-efi.fd" -net none
