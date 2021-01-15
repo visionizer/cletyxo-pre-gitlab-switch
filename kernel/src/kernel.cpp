@@ -13,9 +13,17 @@ extern "C" void _startKernel(Visionizer::Framebuffer* framebuffer, Visionizer::P
 	infoRenderer.CursorPosition = {0, 16};
 	infoRenderer.Print(Visionizer::ToString((int64_t) -394948));
 
-	infoRenderer.CursorPosition = {0, 32};
-	double foo = 13.1454;
-	infoRenderer.Print(Visionizer::ToString(foo));
+	infoRenderer.CursorPosition = {0, infoRenderer.CursorPosition.Y + 16};
+	infoRenderer.Print(Visionizer::ToHString((uint64_t) 0xF0));
+
+	infoRenderer.CursorPosition = {0, infoRenderer.CursorPosition.Y + 16};
+	infoRenderer.Print(Visionizer::ToHString((uint32_t) 0xF0));
+
+	infoRenderer.CursorPosition = {0, infoRenderer.CursorPosition.Y + 16};
+	infoRenderer.Print(Visionizer::ToHString((uint16_t) 0xF0));
+
+	infoRenderer.CursorPosition = {0, infoRenderer.CursorPosition.Y + 16};
+	infoRenderer.Print(Visionizer::ToHString((uint8_t) 0xF0));
 
     return;
 }

@@ -9,5 +9,8 @@ namespace Visionizer
     const char* ToString(int64_t value); // Only signed ints
     const char* ToString(double value, uint8_t decimalPlaces); // Only floats, with decimals
     const char* ToString(double value); // Only floats
-
+    const char* ToHString(uint64_t value); // Makes HexString
+    const char* ToHString(uint32_t value); // Makes HexString with 32bit
+    const char* ToHString(uint16_t value); // Makes HexString with 16bit
+    const char* ToHString(uint8_t value); // Makes HexString with 8bit
 }

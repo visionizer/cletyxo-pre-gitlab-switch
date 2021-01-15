@@ -118,13 +118,87 @@ namespace Visionizer
     const char* ToString(double value)
     {
         // Calculating the decimals
-        uint8_t decimalPlaces = 2;
-        double newValue = value - (int)value; // Only get thingies after 0
-        char* newValueString = (char*)newValue
+        // TODO Round to 2 decimals
+        return ToString(value, 2);
+    }
 
+    char hexToStringResult[128];
+    const char* ToHString(uint64_t value)
+    {  
+        uint64_t* valPtr = &value;
+        uint8_t* ptr;
+        uint8_t tmp;
+        uint8_t size = 8 * 2 - 1;
+        for (uint8_t i = 0; i < size; i++)
+        {
+            ptr = ((uint8_t*) valPtr + i);
+            tmp = ((*ptr & 0xF0) >> 4);
+            hexToStringResult[size - (i * 2 + 1)] = tmp + (tmp > 9 ? 55 : '0');
 
+            tmp = ((*ptr & 0x0F));
+            hexToStringResult[size - (i * 2)] = tmp + (tmp > 9 ? 55 : '0');
+        }
+        hexToStringResult[size + 1] = 0;
+        return hexToStringResult;
+    }
 
-        char* result = (char*)ToString(value, decimalPlaces);
-        return result;
+    char hex32ToStringResult[128];
+    const char* ToHString(uint32_t value)
+    {  
+        uint32_t* valPtr = &value;
+        uint8_t* ptr;
+        uint8_t tmp;
+        uint8_t size = 4 * 2 - 1;
+        for (uint8_t i = 0; i < size; i++)
+        {
+            ptr = ((uint8_t*) valPtr + i);
+            tmp = ((*ptr & 0xF0) >> 4);
+            hex32ToStringResult[size - (i * 2 + 1)] = tmp + (tmp > 9 ? 55 : '0');
+
+            tmp = ((*ptr & 0x0F));
+            hex32ToStringResult[size - (i * 2)] = tmp + (tmp > 9 ? 55 : '0');
+        }
+        hex32ToStringResult[size + 1] = 0;
+        return hex32ToStringResult;
+    }
+
+    char hex16ToStringResult[128];
+    const char* ToHString(uint16_t value)
+    {  
+        uint16_t* valPtr = &value;
+        uint8_t* ptr;
+        uint8_t tmp;
+        uint8_t size = 2 * 2 - 1;
+        for (uint8_t i = 0; i < size; i++)
+        {
+            ptr = ((uint8_t*) valPtr + i);
+            tmp = ((*ptr & 0xF0) >> 4);
+            hex16ToStringResult[size - (i * 2 + 1)] = tmp + (tmp > 9 ? 55 : '0');
+
+            tmp = ((*ptr & 0x0F));
+            hex16ToStringResult[size - (i * 2)] = tmp + (tmp > 9 ? 55 : '0');
+        }
+        hex16ToStringResult[size + 1] = 0;
+        return hex16ToStringResult;
+    }
+
+    char hex8ToStringResult[128];
+    const char* ToHString(uint8_t value)
+    {  
+        uint8_t* valPtr = &value;
+        uint8_t* ptr;
+        uint8_t tmp;
+        uint8_t size = 1 * 2 - 1;
+        for (uint8_t i = 0; i < size; i++)
+        {
+            ptr = ((uint8_t*) valPtr + i);
+            tmp = ((*ptr & 0xF0) >> 4);
+            hex8ToStringResult[size - (i * 2 + 1)] = tmp + (tmp > 9 ? 55 : '0');
+
+            tmp = ((*ptr & 0x0F));
+            hex8ToStringResult[size - (i * 2)] = tmp + (tmp > 9 ? 55 : '0');
+        }
+        hex8ToStringResult[size + 1] = 0;
+        return hex8ToStringResult;
     }
 }
