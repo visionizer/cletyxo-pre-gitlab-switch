@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <time.h>
 typedef char* bootID; // Move to other file TODO
-
+bootID BID;
 
 typedef struct {
 	void* BaseAddress;
@@ -74,21 +74,27 @@ void Print(Framebuffer* framebuffer, PSF1_FONT* psf1_font, unsigned int colour, 
 	}
 }
 
-
-void _startKernel(Framebuffer* framebuffer, PSF1_FONT* psf1_font) 
+char *generateBootID() 
 {
+	return (char*) "12hdhsd934ffh4895rjh8digjd84t586ejh85894";
+	// TODO FIX OBIVOUSLY :)  (Make random)
+}
+
+bootID getBootID()
+{
+	return BID;
+}
+
+
+extern "C" void _startKernel(Framebuffer* framebuffer, PSF1_FONT* psf1_font) 
+{
+	// Set Cursor Position
 	CursorPosition.X = 50;
 	CursorPosition.Y = 120;
-	for (int i = 0; i < 50; i++)
-	{
-		Print(framebuffer, psf1_font, 0xfffffff, "[Kernel] G'day mate! My name is Merlin and I am your kernel. I will do everything important \n\r");
-	}
+
+	BID = generateBootID();
+	// Confirm Kernel Bootup
+	Print(framebuffer, psf1_font, 0xfffffff, "[Kernel] G'day mate! My name is Merlin and I am your kernel. I will do everything important \n\r");
     return;
 }
 
-
-char *generateBootID() 
-{
-	return "12hdhsd934ffh4895rjh8digjd84t586ejh85894";
-	// TODO FIX OBIVOUSLY :) 
-}
