@@ -3,6 +3,7 @@
 
 namespace Visionizer 
 {
+	typedef char* VString;
 	// IF YOU ARE HERE BECAUSE OF AN OVERLOAD ERROR, YOU NEED TO CAST THE NUMBER THAT YOU WANT TO
 	// TURN INTO A STRING TO THE RIGHT TYPE 
     const char* ToString(uint64_t value); // Only unsigned ints

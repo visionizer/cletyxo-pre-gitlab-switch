@@ -2,11 +2,27 @@
 #include <stdlib.h>
 #include "BasicRenderer.h"
 #include "cstr.h"
+#include "Framebuffer.h"
+#include "EfiMemory.h"
+#include "Boot.h"
 
-// THe main
-extern "C" void _startKernel(Visionizer::Framebuffer* framebuffer, Visionizer::PSF1_FONT* psf1_font) 
+
+struct KernelBootInfo 
 {
-	Visionizer::BasicRenderer infoRenderer = Visionizer::BasicRenderer(framebuffer, psf1_font);
+	Visionizer::Framebuffer* framebuffer;
+	Visionizer::PSF1_FONT* psf1_Font;
+	void* mMap;
+	uint64_t mMapSize;
+	uint64_t mDescriptorSize;
+};
+
+
+
+
+// The main
+extern "C" void _startKernel(KernelBootInfo* bootInfo) 
+{
+	Visionizer::BasicRenderer infoRenderer = Visionizer::BasicRenderer(bootInfo->framebuffer, bootInfo->psf1_Font);
 
 	infoRenderer.Print(Visionizer::ToString((uint64_t) 12334558));
 
@@ -24,6 +40,14 @@ extern "C" void _startKernel(Visionizer::Framebuffer* framebuffer, Visionizer::P
 
 	infoRenderer.CursorPosition = {0, infoRenderer.CursorPosition.Y + 16};
 	infoRenderer.Print(Visionizer::ToHString((uint8_t) 0xF0));
+
+
+
+	// Generating the boot
+	Visionizer::Boot* boot = Visionizer::Boot();
+	Visionizer::Boot::GenerateBootIdentifier(boot);
+	Visionizer::BootIdentifier bootIden = Visionizer::Boot::getBootID();
+
 
     return;
 }

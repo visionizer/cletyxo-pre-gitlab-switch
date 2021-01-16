@@ -19,8 +19,14 @@ Starter applications:
 
 ## How to get started
 [More comming soon :)]
-Install it, setup the kernel by going into kernel and using the "make setup" command, build the gnu-efi by going into it and doing "make setup"
-Compile the kernel using "make kernel" and then "make buildimg" to boot it.
-You can also just use "make pfb"
-[Linux only]
-Use "make boot" in kernel to compile, link, make the buildimg and then boot it using qemu.
+First, make the gnu-efi bootloader by using the ``cd gnu-efi`` command. Then use ``make bootloader`` in order to make it. Now, go into the kernel
+by using ``cd ../kernel`` and in it, there are a few commands that you could execute.
+By using ``make kernel`` you make the kernel
+Then follow up with ``make buildimg`` to make the img.
+If you are on Linux, use the ``make run`` command in order to run it using QEMU.
+On Windows, double-click the run.bat.
+
+### Make-Shortcuts
+Tired of using 2 commands to build the kernel?
+Use ``make pfb`` to execute ``make kernel`` first and then ``make buildimg``. This saves you some time. Pfb stands for ``Prepare for boot``
+If you are on Linux, use ``make boot`` in order to first make the kernel, then build the img and then also run it.

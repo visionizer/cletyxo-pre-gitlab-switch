@@ -136,6 +136,16 @@ int memcmp(const void* aptr, const void* bptr, size_t n)
 	return 0;
 }
 
+// Our Kernel struct (With everything that our kernel needs)
+typedef struct 
+{
+	Framebuffer* s_Framebuffer;
+	PSF1_FONT* s_PSF1_Font;
+	EFI_MEMORY_DESCRIPTOR* s_Map;
+	UINTN s_MapSize;
+	UINTN s_MapDescriptorSize;
+
+} KernelBootInfo;
 
 
 // The entire main triggered on boot
@@ -221,10 +231,6 @@ EFI_STATUS efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
 
 	Print(L"[Bootloader] Kernel was successfully loaded. \n\r");
 
-	// Initializing our Kernel variable
-	void (*KernelStart)(Framebuffer*, PSF1_FONT*) = ((__attribute__((sysv_abi)) void (*)(Framebuffer*, PSF1_FONT*) ) header.e_entry); // TODO REMOVE int from return
-
-
 
 
 	// Loading the font...
@@ -260,10 +266,43 @@ EFI_STATUS efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
 		newBuffer->PixelsPerScanline);
 
 
+
+	// Memory Maps
+	EFI_MEMORY_DESCRIPTOR* Map = NULL;
+	UINTN MapSize, MapKey;
+	UINTN DescriptorSize;
+	UINT32 DescriptorVersion;
+	{
+		SystemTable->BootServices->GetMemoryMap(&MapSize, Map, &MapKey, &DescriptorSize, &DescriptorVersion);
+		SystemTable->BootServices->AllocatePool(EfiLoaderData, MapSize, (void**)&Map);
+		SystemTable->BootServices->GetMemoryMap(&MapSize, Map, &MapKey, &DescriptorSize, &DescriptorVersion);
+	}
+
 	Print(L"\n\r");
 	Print(L"[Bootloader] I am Alex, remember me? Your bootloader. Anyways, goodbye. My job is done \n\r");
 
+
+
+
+
 	// Loading the kernel
-	KernelStart(newBuffer, newFont);
+	void (*KernelStart)(KernelBootInfo*) = ((__attribute__((sysv_abi)) void (*)(KernelBootInfo*) ) header.e_entry);
+
+	// Setting up our kernel struct
+	KernelBootInfo kernelBootInfo;
+	kernelBootInfo.s_Framebuffer = newBuffer;
+	kernelBootInfo.s_PSF1_Font = newFont;
+	kernelBootInfo.s_Map = Map;
+	kernelBootInfo.s_MapSize = MapSize;
+	kernelBootInfo.s_MapDescriptorSize = DescriptorSize;
+
+
+
+
+	// Exiting the boot services..
+	SystemTable->BootServices->ExitBootServices(ImageHandle, MapKey);
+
+	KernelStart(&kernelBootInfo);
+
 	return EFI_SUCCESS; // Exit the UEFI application
 }
