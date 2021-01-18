@@ -55,6 +55,8 @@ dkms.conf
 *.elf
 *.img
 
-/kernel/bin/
+# Binaries
+*.img
+*.elf
 
 *.fd
