@@ -17,13 +17,17 @@ struct KernelBootInfo
 };
 
 
+// The boot
+Visionizer::Boot* boot;
+// Getter
+Visionizer::Boot* getBoot() { return boot; }
 
 
 // The main
 extern "C" void _startKernel(KernelBootInfo* bootInfo) 
 {
 	Visionizer::BasicRenderer infoRenderer = Visionizer::BasicRenderer(bootInfo->framebuffer, bootInfo->psf1_Font);
-
+	
 	infoRenderer.Print(Visionizer::ToString((uint64_t) 12334558));
 
 	infoRenderer.CursorPosition = {0, 16};
@@ -44,10 +48,8 @@ extern "C" void _startKernel(KernelBootInfo* bootInfo)
 
 
 	// Generating the boot
-	Visionizer::Boot* boot = Visionizer::Boot();
-	Visionizer::Boot::GenerateBootIdentifier(boot);
-	Visionizer::BootIdentifier bootIden = Visionizer::Boot::getBootID();
-
+	boot->ID = Visionizer::GenerateRandomBootID();
+	infoRenderer.Print(boot->ID);
 
     return;
 }

@@ -3,27 +3,12 @@
 
 namespace Visionizer 
 {
-	struct BootIdentifier
+	struct Boot
 	{
-		VString ID;
+		const char* ID;
 		// TODO Add more
 	};
 
-	class Boot
-	{
-	public:
-		Boot();
-		virtual ~Boot();
-		BootIdentifier GenerateBootIdentifier(Boot boot);
+	const char* GenerateRandomBootID();
 
-
-		// Getters
-		inline float getRuntime() { return runtime; }
-		inline BootIdentifier getBootID() { return id; }
-
-
-	private:
-		float runtime = 0.0f; // Returns boot time in seconds
-		BootIdentifier id;
-	};
 }
