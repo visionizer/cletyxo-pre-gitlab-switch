@@ -56,3 +56,5 @@ dkms.conf
 *.img
 
 /kernel/bin/
+
+*.fd
