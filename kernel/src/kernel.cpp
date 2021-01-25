@@ -5,6 +5,8 @@
 #include "Framebuffer.h"
 #include "EfiMemory.h"
 #include "Memory.h"
+#include "Bitmap.h"
+#include "PageFrameAllocator.h"
 
 
 struct KernelBootInfo
@@ -23,30 +25,61 @@ void NewLine(Visionizer::BasicRenderer* ren)
 	return;
 }
 
+extern uint64_t _KernelStart;
+extern uint64_t _KernelEnd;
+
+
+
+
+
+
 // The main
 extern "C" void _startKernel(KernelBootInfo* bootInfo)
 {
 	Visionizer::BasicRenderer infoRenderer = Visionizer::BasicRenderer(bootInfo->framebuffer, bootInfo->psf1_Font);
 
-	NewLine(&infoRenderer);
-
 	uint64_t mMapEntries = bootInfo->mMapSize / bootInfo->mMapDescSize;
 
-	infoRenderer.Print(Visionizer::ToString(Visionizer::GetMemorySize(bootInfo->mMap, mMapEntries, bootInfo->mMapDescSize)));
-
-//	for (int i = 0; i < mMapEntries; i++)
-//	{
-//		Visionizer::EFI_MEMORY_DESCRIPTOR* desc = (Visionizer::EFI_MEMORY_DESCRIPTOR*)((uint64_t)bootInfo->mMap + (i * bootInfo->mMapDescSize));
-//		NewLine(&infoRenderer);
-//		infoRenderer.Print(Visionizer::EFI_MEMORY_TYPE_STRINGS[desc->type]);
-//		infoRenderer.Colour = 0xffff00ff;
-//		infoRenderer.Print(" ");
-//		infoRenderer.Print(Visionizer::ToString(desc->numPages * 4096 /* Gives us bits */ / 1024 /* Into kilobytes*/));
-//		infoRenderer.Print(" KB");
-//		infoRenderer.Colour = 0xffffffff;
-//
-//	}
+	Visionizer::PageFrameAllocator mainAllocator;
+	mainAllocator.ReadEfiMemoryMap(bootInfo->mMap, bootInfo->mMapSize, bootInfo->mMapDescSize);
 
 
+	// ALLOCATING FOR THE KERNEL
+
+	// How much memory will our kernel need?
+	uint64_t kernelSize = (uint64_t)&_KernelEnd - (uint64_t)&_KernelStart;// Gives us size of kernel in mem
+
+	// How many pages do we have to allocate for the Kernel?
+	uint64_t kernelPages = (uint64_t)kernelSize / 4096 + 1;
+
+	mainAllocator.LockPages(&_KernelStart, kernelPages); // It should be locked away by EFI, but just to make sure, we lock it again
+	// ---
+
+
+	NewLine(&infoRenderer);
+	infoRenderer.Print("Free RAM: ");
+	infoRenderer.Print(Visionizer::ToString(mainAllocator.GetFreeRAM() / 1024 /* Into kilobytes */ )); 
+	infoRenderer.Print(" KB");
+
+	NewLine(&infoRenderer);
+	infoRenderer.Print("Used RAM: ");
+	infoRenderer.Print(Visionizer::ToString(mainAllocator.GetUsedRAM() / 1024));
+	infoRenderer.Print(" KB");
+
+	NewLine(&infoRenderer);
+	infoRenderer.Print("Reserved RAM: ");
+	infoRenderer.Print(Visionizer::ToString(mainAllocator.GetReservedRAM() / 1024));
+	infoRenderer.Print(" KB");
+
+	for (int i = 0; i < 20; i++)
+	{
+		void* address = mainAllocator.RequestPage();
+		NewLine(&infoRenderer);
+		infoRenderer.Print(Visionizer::ToHString((uint64_t)address));
+	}
+
+	
+
+	
     return;
 }
