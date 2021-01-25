@@ -11,7 +11,6 @@ namespace Visionizer
 		uint64_t numPages; // Number of pages
 		uint64_t attribs; // Attributes
 	};
+
+	extern const char* EFI_MEMORY_TYPE_STRINGS[];
 }
-
-
-extern const char* EFI_MEMORY_TYPE_STRINGS[];

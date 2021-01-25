@@ -1,5 +1,4 @@
 
-#include "Boot.h"
 
 namespace Visionizer
 {
@@ -11,9 +10,8 @@ namespace Visionizer
 
 
 
-	Boot* boot;
-
-
-	inline Boot* GetBootInstance() const { return boot; }
-	inline BootID GetBootID() const { return boot->ID; }
+//	Boot* boot;
+//
+//
+//	inline Boot* GetBootInstance() const { return boot; }
 }
