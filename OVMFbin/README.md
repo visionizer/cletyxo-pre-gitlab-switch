@@ -1,2 +1,2 @@
-# This is an empty directory
-# Files in here will be generated when you go into the kernel and run "make pfb"
+# This is a binary directory
+# No, these binaries cannot be deleted as they are required for boot.

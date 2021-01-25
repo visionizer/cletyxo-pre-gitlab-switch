@@ -1,7 +1,7 @@
 #include "EfiMemory.h"
 
 
-namespace Visionizer 
+namespace Visionizer
 {
 	const char* EFI_MEMORY_TYPE_STRINGS[]
 	{
@@ -16,6 +16,8 @@ namespace Visionizer
 		"EfiUnusableMemory",
 		"EfiACPIReclaimMemory",
 		"EfiACPIMemoryNVS",
+		"EfiMemoryMappedIO",
+		"EfiMemoryMappedIOPortSpace",
+		"EfiPalCode",
 	};
 }
-
